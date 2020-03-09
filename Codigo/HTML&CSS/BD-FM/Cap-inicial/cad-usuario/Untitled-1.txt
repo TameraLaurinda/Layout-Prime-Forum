@@ -1,0 +1,241 @@
+	var list_Talks = Array();
+
+			var list_Length = Array();
+
+			var quantidade = 0
+
+			var validarLength = 0;
+
+			var list_posiction_Talks = []
+
+			//lista de números aleatório 
+			arrayRam = Array();
+
+			//Função para adicinar os nomes e durações das palestras e em duas lista diferentes
+			function AddList ()
+			{
+				var name_talks = " ";
+			    var time_length = 0;
+			    var time = 0;
+
+
+				name_talks = document.getElementById("talks_name").value;
+				time_length = document.getElementById("length_value").value;
+
+
+				//Validando entras do Input
+				if(name_talks != " " && time_length > 0)
+			    {
+			    	list_Talks.push(name_talks) ;
+			    	list_Length.push(parseInt(time_length));  
+
+			    	time = parseInt(time_length);
+
+			    	validarLength = validarLength + time;
+
+			    	quantidade++;
+			    	
+			    }
+			    else{
+
+			    	alert('Campos com valores inválidos');
+			    }
+				console.log(list_Talks);
+				console.log(list_Length);
+				console.log(quantidade);
+			}
+
+			//Função para gerar uma lista de indices com o tatol da palestras adicionadas para poder gerar o valor aleatório para p sorteio das palestras
+			function getRandom(num)
+			{
+				var nums = Array()
+
+				for(var i = 0; i < num; i++)
+				{
+					nums.push(i);
+					console.log(nums)
+				}
+
+		
+				var i = num;
+				var j = 0;
+
+				while (i--)
+				{
+					j = Math.floor(Math.random() * (i+1));
+					var p = nums[j]
+					arrayRam.push(p);
+					nums.splice(j, 1);
+				}
+
+			}
+
+			//função para lipar o verto de número aleatórios
+			function cleararryRam(qnt)
+			{
+				for(var n = 0; n < qnt ; n++)
+				{
+					arrayRam.pop();
+				}
+			}
+
+			var listAM = []; //lista para receber as palestra do periodo da manhã
+			var listPM = []; // Lista para receber as palestras do perioso noturno
+			var qntdelementos = 0;  // contador do total de palestras
+			var am = 0, pm = 0; // contador de palestras por periodo
+
+			function orderConf(qnt)
+			{
+				console.log('orderConf iniciado');
+				getRandom(qnt);
+				var i = 0;
+
+
+				//validando total de valores de horas inserido
+				if(validarLength < 420)
+				{
+					alert("Quantidade de Eventos insuficiente para a conferencia");
+
+				}
+
+				else
+				{
+
+					console.log("time validado")
+					var timeAM = 0 , timePM = 0;
+					
+					var validateTalks = false;
+					
+					while(validateTalks == false)
+					{
+						while(timeAM < 180 )
+						{
+							var p = arrayRam[qntdelementos]
+							timeAM = timeAM + list_Length[p];
+
+							listAM.push(list_Length[p]);
+
+							list_posiction_Talks.push(p)
+								
+							qntdelementos++;
+							am++;
+
+								console.log(listAM);
+						}
+
+						while(timePM < 240)
+						{
+							timePM = timePM + list_Length[arrayRam[qntdelementos]];
+
+							listPM.push(list_Length[arrayRam[qntdelementos]]);
+
+							list_posiction_Talks.push(arrayRam[qntdelementos])
+
+							qntdelementos ++;
+							pm ++;
+
+							console.log(listPM);
+						}
+								
+						//Validando horários das conferencias	
+						if(timeAM == 180 && timePM == 240)
+						{
+							validateTalks = true
+							printConf()
+						}
+						else
+						{
+							
+							arrayRam = 0; //Limpando listas
+							getRandom(qnt); //Gerando otra lista aleatória
+							
+							//Zerar lista e validadores
+							timeAM = 0; 
+							timePM = 0;
+							listAM = 0
+							listPM = 0
+							list_posiction_Talks = 0
+
+
+							//Zerar contadores
+							qntdelementos = 0;
+							am = 0;
+							pm = 0;
+
+						}
+				
+						console.log('finalizado')
+					
+					}
+
+				}
+			}
+
+			//Função para converte minutos em horas
+			function coverteTime(min)
+			{
+				var hours = 0,  minutes = 0;
+
+				hours = parseInt(min/60);
+				minutes = min%60;
+
+				if(minutes >= 60 )
+				{
+					if(minutes == 60)
+					{
+						hours = hours + 1;
+
+						return hours +':'+ '00';
+					}
+					else
+					{
+						var extouro = minutes - 60;
+						horas = horas + 1;
+
+						return hours + ':' + extouro ;
+					}
+					
+				}
+				else
+				{
+					return hours +':'+'00'
+				}
+
+			}
+
+			function printConf()
+			{
+				var totalTalks = am + pm;
+				var limitAM =0, limitPM = 0;
+				var minAM = 540, minPM = 60;
+
+
+
+				for(var n = 0; n < am ; n++)
+				{	
+
+					if(n > 0)
+					{
+						minAM = minAM + list_Length[n-1]
+					}
+
+					document.write(list_Talks[list_posiction_Talks[n]] +' '+ coverteTime(minAM) + '<br/>' )
+
+					
+				}
+
+				document.write('Intervalo 12:00' + '<br/>')
+
+				for(var n = qntdelementos - am; n < qntdelementos; n++)
+				{
+					if(n > 0)
+					{
+						minPM = minPM + list_Length[n-1]
+					}
+
+					document.write(list_Talks[list_posiction_Talks[n]] +' '+ coverteTime(minPM) 
+					+ '<br/>' )
+				}
+
+				document.write('workshopping 17:00' + '<br/>') 
+			}
